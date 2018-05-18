@@ -1,0 +1,21 @@
+{
+  "name": "app-builder-javascript",
+  "version": "1.0.0",
+  "description": "Builder image for javascript components",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dexiio/app-builder-javascript.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dexiio/app-builder-javascript/issues"
+  },
+  "homepage": "https://github.com/dexiio/app-builder-javascript#readme",
+  "dependencies": {
+    "browserify": "16.2.2",
+    "jslint": "0.12.0",
+    "stringify": "5.2.0",
+    "yamljs": "0.3.0"
+  }
+}
