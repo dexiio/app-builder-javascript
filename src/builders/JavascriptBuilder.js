@@ -12,7 +12,7 @@ const IgnoreLintErrorList = [
 ];
 
 function ignoreError(err) {
-    for(var i = 0; i < IgnoreLintErrorList.length; i++) {
+    for (let i = 0; i < IgnoreLintErrorList.length; i++) {
         if (IgnoreLintErrorList[i](err)) {
             return true;
         }
@@ -153,6 +153,8 @@ class JavascriptBuilder {
             //Even in browser mode we'll get the builtins from the existing browserify bundle
             opts.builtins = false;
         }
+
+        opts.standalone = 'module'; // Allows us to access the browserify context externally using the name "module"
 
         var browserify = Browserify(opts);
 
