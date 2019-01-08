@@ -119,7 +119,7 @@ class JavascriptBuilder {
             opts.builtins = false;
         }
 
-        opts.standalone = 'DexiModule'; // Allows us to access the browserify context externally using the name "module"
+        opts.standalone = 'DexiModule'; // Allows us to access the browserify context externally using the name "DexiModule"
 
         var browserify = Browserify(opts);
 
