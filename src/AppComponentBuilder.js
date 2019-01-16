@@ -33,6 +33,7 @@ class AppComponentBuilder {
 
         return this._sourceFolder + '/' + entryPoint;
     }
+
     /**
      * Builds the given component and places the resulting asset into the target folder using the name "component.js".
      *
@@ -51,13 +52,9 @@ class AppComponentBuilder {
 
         const programTarget = target + '/' + PROGRAM;
 
-        var jsBuild = new JavascriptBuilder(
-            AppComponentBuilder.isBrowserBased(this._component),
-            entryPoint,
-            programTarget
-        );
+        var jsBuilder = new JavascriptBuilder(AppComponentBuilder.isBrowserBased(this._component), entryPoint, programTarget, this._component);
 
-        await jsBuild.build(this._component.id);
+        await jsBuilder.build(this._component.id);
 
         assets.push(programTarget);
 

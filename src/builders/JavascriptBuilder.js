@@ -1,31 +1,20 @@
+const _ = require('lodash');
 const FS = require('fs');
 const Path = require('path');
 const ChildProcess = require('child_process');
-const LintStream = require('jslint').LintStream;
 const Browserify = require('browserify');
 const Stringify = require('stringify');
-
-
-const IgnoreLintErrorList = [
-    (err) => (err.code === 'expected_a_before_b' && err.a === 'use strict'),
-    (err) => (err.code === 'bad_property_a' && err.a.startsWith('$'))
-];
-
-function ignoreError(err) {
-    for (let i = 0; i < IgnoreLintErrorList.length; i++) {
-        if (IgnoreLintErrorList[i](err)) {
-            return true;
-        }
-    }
-
-    return false;
-}
+const Linter = require('eslint').Linter;
 
 const StringifyOptions = ['.html', '.xhtml', '.txt', '.hbs', '.xml'];
 
+const LINT_OPTIONS = require('./.eslintrc');
+const BROWSER_ACTION_LINT_OPTIONS = require('./.eslintrc.browser-action');
+const PIPE_ACTION_LINT_OPTIONS = require('./.eslintrc.pipe-action');
+const FIELD_TYPE_LINT_OPTIONS = require('./.eslintrc.field-type');
+
 function iterateFolder(dir, callback, filter) {
-    var files = FS.readdirSync(dir);
-    files.forEach(function(file) {
+    FS.readdirSync(dir).forEach(file => {
         const absPath = dir + '/' + file;
 
         if (filter && !filter(absPath, file)) {
@@ -46,15 +35,16 @@ function ignoreNodeModulesFilter(absPath, name) {
 
 class JavascriptBuilder {
 
-    constructor(buildForBrowser, entrypoint, target) {
+    constructor(buildForBrowser, entrypoint, target, component) {
         this._buildForBrowser = buildForBrowser;
         this._entrypoint = entrypoint;
         this._target = target;
+        this._component = component;
     }
 
     maybeNpmInstall() {
-        var baseDir = Path.dirname(this._entrypoint);
-        var path = baseDir + '/package.json';
+        const baseDir = Path.dirname(this._entrypoint);
+        const path = baseDir + '/package.json';
 
         if (!FS.existsSync(path)) {
             return
@@ -72,60 +62,35 @@ class JavascriptBuilder {
     }
 
     _lintAll() {
-        var hadErrors = false;
+        let hadErrors = false;
         const baseDir = Path.dirname(this._entrypoint);
 
-        const opts = {
-            edition: "latest",
-            length: 100,
-            strict: false,
-            sloppy: true,
-            browserify: true,
-            es6: true,
-            predef: [
-                'module',
-                't',
-                'require'
-            ]
-        };
-
         if (this._buildForBrowser) {
-            opts.predef.push('$');
+            LINT_OPTIONS.env = 'browser';
+        } else {
+            LINT_OPTIONS.env = 'node';
         }
-
-        const lint = new LintStream(opts);
 
         console.log('Linting component source in: %s', baseDir);
 
-        lint.on('data', function(chunk) {
-
-            if (chunk.linted.ok) {
-                return;
-            }
-
-            chunk.linted.errors.forEach(function(err) {
-                if (ignoreError(err)) {
-                    return;
-                }
-
-                hadErrors = true;
-
-                console.log('err', err.code);
-
-                console.error("\t - Lint error in file %s:%s:%s ", chunk.file, err.line + 1, err.column + 1, err.message);
-            });
-        });
-
-        iterateFolder(baseDir, function(filePath) {
+        iterateFolder(baseDir, (filePath) => {
             if (!filePath.endsWith('.js')) {
                 return;
             }
 
             const fileContents = FS.readFileSync(filePath).toString();
+            const linter = new Linter();
+            const messages = linter.verify(fileContents, this.getLintOptions(), filePath);
 
-            lint.write({
-                file: filePath,
-                body: fileContents
+            messages.forEach(message => {
+                if (message.fatal || message.severity > 1) {
+                    hadErrors = true;
+                    console.log('err', message.ruleId);
+                    console.error("\t - Lint error in file %s:%s:%s ", filePath, message.line + 1, message.column + 1, message.message);
+                } else {
+                    console.log('warn', message.ruleId);
+                    console.warn("\t - Lint warning in file %s:%s:%s ", filePath, message.line + 1, message.column + 1, message.message);
+                }
             });
         }, ignoreNodeModulesFilter);
 
@@ -154,7 +119,7 @@ class JavascriptBuilder {
             opts.builtins = false;
         }
 
-        opts.standalone = 'module'; // Allows us to access the browserify context externally using the name "module"
+        opts.standalone = 'DexiModule'; // Allows us to access the browserify context externally using the name "DexiModule"
 
         var browserify = Browserify(opts);
 
@@ -200,6 +165,22 @@ class JavascriptBuilder {
         this.maybeNpmInstall();
 
         return this._compile(componentId);
+    }
+
+    getLintOptions () {
+        switch (this._component.type) {
+            case 'browser-action':
+                return _.merge(LINT_OPTIONS, BROWSER_ACTION_LINT_OPTIONS);
+
+            case 'pipe-action':
+                return _.merge(LINT_OPTIONS, PIPE_ACTION_LINT_OPTIONS);
+
+            case 'field-type':
+                return _.merge(LINT_OPTIONS, FIELD_TYPE_LINT_OPTIONS);
+
+            default:
+                return LINT_OPTIONS;
+        }
     }
 }
 

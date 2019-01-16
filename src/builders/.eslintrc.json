@@ -1,0 +1,68 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 9,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "globals": {
+    "module": false,
+    "t": false,
+    "require": false
+  },
+  "rules": {
+    "no-eval": "error",
+    "no-use-before-define": ["error", {"functions": false, "classes": false, "vars": true}],
+    "getter-return": "error",
+    "no-compare-neg-zero": "error",
+    "no-cond-assign": "error",
+    "no-console": "error",
+    "no-constant-condition": "error",
+    "no-control-regex": "error",
+    "no-debugger": "error",
+    "no-dupe-args": "error",
+    "no-dupe-class-members": "error",
+    "no-dupe-keys": "error",
+    "no-empty-character-class": "error",
+    "no-ex-assign": "error",
+    "no-extra-semi": "error",
+    "no-func-assign": "error",
+    "no-invalid-regexp": "error",
+    "no-irregular-whitespace": "error",
+    "no-obj-calls": "error",
+    "no-regex-spaces": "error",
+    "no-unexpected-multiline": "error",
+    "no-unreachable": "error",
+    "no-unsafe-negation": "error",
+    "use-isnan": "error",
+    "valid-typeof": "error",
+    "no-case-declarations": "error",
+    "no-empty-pattern": "error",
+    "no-global-assign": "error",
+    "no-implied-eval": "error",
+    "no-alert": "error",
+    "no-caller": "error",
+    "no-invalid-this": "error",
+    "no-throw-literal": "error",
+    "no-process-exit": "error",
+    "no-process-env": "error",
+    "no-proto": "error",
+    "no-delete-var": "error",
+    "no-undef": "error",
+    "no-class-assign": "error",
+    "no-confusing-arrow": ["error", {"allowParens": true}],
+    "no-duplicate-imports": "error",
+    "no-const-assign": "error",
+    "no-new-symbol": "error",
+    "require-yield": "error",
+    "camelcase": "error",
+
+    "no-return-await": "warn",
+    "no-undef-init": "warn",
+    "no-unused-vars": "warn",
+    "indent": "warn",
+    "no-mixed-spaces-and-tabs": "warn",
+    "prefer-const": "warn"
+  }
+}

@@ -10,12 +10,8 @@ const TARGET_FOLDER = process.env.TARGET_FOLDER || '/var/workspace/target';
 var DEXI_YAML_PATH = SOURCE_FOLDER + '/dexi.yml';
 
 if (!FS.existsSync(DEXI_YAML_PATH)) {
-    DEXI_YAML_PATH = SOURCE_FOLDER + '/dexi.yaml';
-
-    if (!FS.existsSync(DEXI_YAML_PATH)) {
-        console.error("No dexi.yaml file found in source folder! (%s)", DEXI_YAML_PATH);
-        process.exit(1);
-    }
+    console.error("No dexi.yml file found in source folder! (%s)", DEXI_YAML_PATH);
+    process.exit(1);
 }
 
 async function doProcess() {
@@ -36,10 +32,16 @@ async function doProcess() {
     }));
 }
 
-doProcess().then(function() {
-    console.log("Build succeeded!");
-    process.exit(0);
-}).catch(function(err) {
-    console.error("Build failed: \n", err ? err.stack : 'Unknown error');
-    process.exit(1);
-});
+async function execute () {
+    try {
+        await doProcess();
+        console.log("Build succeeded!");
+        process.exit(0);
+    } catch (err) {
+        console.error("Build failed: \n", err ? err.message : 'Unknown error'); // The stack will simply point to AppComponentBuilder
+        process.exit(1);
+    }
+
+}
+
+execute();
