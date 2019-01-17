@@ -61,7 +61,6 @@
     "no-return-await": "warn",
     "no-undef-init": "warn",
     "no-unused-vars": "warn",
-    "indent": "warn",
     "no-mixed-spaces-and-tabs": "warn",
     "prefer-const": "warn"
   }

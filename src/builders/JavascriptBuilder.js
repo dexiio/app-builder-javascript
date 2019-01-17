@@ -4,9 +4,11 @@ const Path = require('path');
 const ChildProcess = require('child_process');
 const Browserify = require('browserify');
 const Stringify = require('stringify');
+const NodeLessify = require('node-lessify');
 const Linter = require('eslint').Linter;
 
 const StringifyOptions = ['.html', '.xhtml', '.txt', '.hbs', '.xml'];
+const NodeLessifyOptions = {textMode: true};
 
 const LINT_OPTIONS = require('./.eslintrc');
 const BROWSER_ACTION_LINT_OPTIONS = require('./.eslintrc.browser-action');
@@ -121,16 +123,16 @@ class JavascriptBuilder {
 
         opts.standalone = 'DexiModule'; // Allows us to access the browserify context externally using the name "DexiModule"
 
-        var browserify = Browserify(opts);
+        const browserify = Browserify(opts);
 
         browserify.transform(Stringify(StringifyOptions));
+        browserify.transform(NodeLessify, NodeLessifyOptions);
 
         browserify.add(this._entrypoint, {
             expose: 'component'
         });
 
         var me = this;
-
         var targetFolder = Path.dirname(me._target);
 
         if (!FS.existsSync(targetFolder)) {

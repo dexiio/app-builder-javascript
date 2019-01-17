@@ -13,8 +13,10 @@
   },
   "homepage": "https://github.com/dexiio/app-builder-javascript#readme",
   "dependencies": {
+    "aliasify": "2.1.0",
     "browserify": "16.2.2",
     "eslint": "5.12",
+    "node-lessify": "0.1.5",
     "stringify": "5.2.0",
     "yamljs": "0.3.0"
   }
