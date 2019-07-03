@@ -28,7 +28,7 @@ class AppComponentBuilder {
         }
 
         if (!entryPoint) {
-            throw new Error('No source file specified for component: ' + this._component.id);
+            throw new Error('No source file specified for component: ' + this._component.name);
         }
 
         return this._sourceFolder + '/' + entryPoint;
@@ -43,7 +43,7 @@ class AppComponentBuilder {
         var language = this.getLanguage();
 
         if (['js','javascript'].indexOf(language) === -1) {
-            throw new Error('Unsupported language: ' + language + ' for component: ' + this._component.id);
+            throw new Error('Unsupported language: ' + language + ' for component: ' + this._component.name);
         }
 
         var entryPoint = this.getEntryPoint();
@@ -54,7 +54,7 @@ class AppComponentBuilder {
 
         var jsBuilder = new JavascriptBuilder(AppComponentBuilder.isBrowserBased(this._component), entryPoint, programTarget, this._component);
 
-        await jsBuilder.build(this._component.id);
+        await jsBuilder.build(this._component.name);
 
         assets.push(programTarget);
 
