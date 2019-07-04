@@ -24,11 +24,11 @@ async function doProcess() {
             return null;
         }
 
-        const componentId = component.id;
+        const componentName = component.name;
 
         const componentBuilder = new AppComponentBuilder(SOURCE_FOLDER, component);
 
-        return componentBuilder.build(TARGET_FOLDER + '/' + componentId);
+        return componentBuilder.build(TARGET_FOLDER + '/' + componentName);
     }));
 }
 
