@@ -104,14 +104,14 @@ class JavascriptBuilder {
         throw new Error('Component failed linting verification');
     }
 
-    async _compile(componentId) {
+    async _compile(componentName) {
         console.log('Compiling component: %s', this._entrypoint);
 
         const baseDir = Path.dirname(this._entrypoint);
 
         var opts = {
             basedir: baseDir,
-            externalRequireName: 'components["' + componentId + '"]'
+            externalRequireName: 'components["' + componentName + '"]'
         };
 
         if (!this._buildForBrowser) {
@@ -157,7 +157,7 @@ class JavascriptBuilder {
         });
     }
 
-    async build(componentId) {
+    async build(componentName) {
         if (!FS.existsSync(this._entrypoint)) {
             throw new Error('Source file not found: ' + this._entrypoint);
         }
@@ -166,7 +166,7 @@ class JavascriptBuilder {
 
         this.maybeNpmInstall();
 
-        return this._compile(componentId);
+        return this._compile(componentName);
     }
 
     getLintOptions () {
